@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import fetch from "node-fetch";
+import axios from "axios";
 import qs from "qs";
 
 dotenv.config();
@@ -16,7 +16,11 @@ const weatherFor = async ({ zip, country }: IWeatherFor) => {
     zip: [zip, country].join(","),
     appid: APP_ID
   };
-  return await fetch(`${API_URL}?${qs.stringify(params)}`);
+  const resp = await axios(`${API_URL}?${qs.stringify(params)}`);
+  return resp.data;
 };
 
-console.log(weatherFor({ zip: 94040, country: "us" }));
+(async function() {
+  const { weather, dt } = await weatherFor({ zip: 94040, country: "us" });
+  console.log(weather[0].main, new Date(dt * 1000));
+})();
